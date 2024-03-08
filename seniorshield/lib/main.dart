@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:seniorshield/constants/colors.dart';
 import 'package:seniorshield/views/splash_screen/splash1.dart';
 
 void main() {
@@ -15,13 +17,10 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Senior Shield',
       theme: ThemeData(
-          scaffoldBackgroundColor: Colors.transparent,
-          appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
+        scaffoldBackgroundColor: kDefaultIconLightColor,
+        appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
       ),
       home: Splash1(),
     );
   }
 }
-
-
-

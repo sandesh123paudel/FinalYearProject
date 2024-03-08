@@ -12,15 +12,14 @@ class Splash1 extends StatefulWidget {
 }
 
 class _Splash1State extends State<Splash1> {
-
   //creating the method to change screen
 
-  changeScreen()
-  {
-    Future.delayed(Duration(seconds:3),(){
-      Get.to(()=>Splash2());
+  changeScreen() {
+    Future.delayed(Duration(seconds: 3), () {
+      Get.to(() => Splash2());
     });
   }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -30,6 +29,6 @@ class _Splash1State extends State<Splash1> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body:Center(child: Image.asset(logoNoBg)));
+    return Scaffold(body: Center(child: Image.asset(logoColor)));
   }
 }
