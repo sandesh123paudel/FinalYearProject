@@ -5,7 +5,7 @@ import 'package:seniorshield/views/splash_screen/splash3.dart';
 import 'package:seniorshield/widgets/responsive_text.dart';
 
 import '../../constants/util/util.dart';
-import '../../widgets/custom_textField.dart';
+import '../../widgets/customLogin_textField.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             Container(
               padding: EdgeInsets.symmetric(
-                  horizontal: kHorizontalMargin * 3, vertical: kVerticalMargin),
+                  horizontal: kHorizontalMargin * 2, vertical: kVerticalMargin),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -69,12 +69,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin*3,vertical: kVerticalMargin),
+              padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin*2,vertical: kVerticalMargin),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomTextField(
+                  CustomLoginTextField(
                     labelText: 'Email',
                     hintText: 'sandeshpaudel@gmail.com',
 
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   ),
                   SizedBox(height: kVerticalMargin),
-                  CustomTextField(
+                  CustomLoginTextField(
                     labelText: 'Password',
                     hintText: '***********',
                     obscureText: true,
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: kVerticalMargin),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin*3),
+              padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin*2),
               child: SizedBox(
                 width: double.infinity, // Ensures buttons take full width
                 child: Container(
@@ -118,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  ResponsiveText("Haven't registerd yet?",textColor: kDefaultIconDarkColor,),
+                  ResponsiveText("Haven't registered yet?",textColor: kDefaultIconDarkColor,),
                   SizedBox(width: kHorizontalMargin),
                   ResponsiveText("Register!",fontWeight: FontWeight.w600,textColor: kPrimaryColor,)
                 ],

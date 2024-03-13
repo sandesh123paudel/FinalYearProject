@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:seniorshield/constants/colors.dart';
 import 'package:seniorshield/constants/util/util.dart';
 import 'package:seniorshield/views/auth_screen/login_screen.dart';
+import 'package:seniorshield/views/auth_screen/register_screen.dart';
 import 'package:seniorshield/widgets/responsive_text.dart';
 import '../../constants/images.dart';
 
@@ -61,7 +62,9 @@ class _Splash3State extends State<Splash3> {
                     "Fusce a consectetur velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Proin vitae ex neque.",
                     textColor: kPrimaryColor,
                     fontFamily: 'RobotoMono',
-                    fontSize: 15,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 SizedBox(height: kVerticalMargin*4),
@@ -69,7 +72,8 @@ class _Splash3State extends State<Splash3> {
                   Get.to(LoginScreen());
                 }),
                 styledButton("Register", () {
-                  // Handle register tap
+                  Get.to(RegisterScreen());
+
                 }),
 
               ],
