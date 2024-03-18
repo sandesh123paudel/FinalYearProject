@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 const kNeutralColor = Color(0xfff5f5f5);
-const kPrimaryColor = Color(0xff287a0f);
+const kPrimaryColor = Color(0xff287A0F);
 const kBlack600 = Color(0xff5E656E);
 const kSearchBorderColor = Color(0xffEAEBF0);
 const kItemDescriptionColor=Color(0xff68727D);

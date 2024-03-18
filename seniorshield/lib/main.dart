@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seniorshield/constants/colors.dart';
+import 'package:seniorshield/views/home_screen/home.dart';
 import 'package:seniorshield/views/splash_screen/splash1.dart';
 
 void main() {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:seniorshield/widgets/responsive_text.dart';
-
 import '../constants/colors.dart';
 import '../constants/util/util.dart';
 
@@ -9,6 +8,8 @@ class CustomLoginTextField extends StatefulWidget {
   final String? hintText;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator; // New validator parameter
 
   const CustomLoginTextField({
     Key? key,
@@ -16,6 +17,8 @@ class CustomLoginTextField extends StatefulWidget {
     @required this.hintText,
     this.keyboardType,
     this.obscureText = false,
+    this.controller,
+    this.validator, // Added validator parameter
   }) : super(key: key);
 
   @override
@@ -23,7 +26,15 @@ class CustomLoginTextField extends StatefulWidget {
 }
 
 class _CustomLoginTextFieldState extends State<CustomLoginTextField> {
+  late TextEditingController _textEditingController;
   bool _obscureText = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize TextEditingController if not provided
+    _textEditingController = widget.controller ?? TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +48,8 @@ class _CustomLoginTextFieldState extends State<CustomLoginTextField> {
           fontWeight: FontWeight.w500,
         ),
         SizedBox(height: kVerticalMargin / 2),
-        TextField(
+        TextFormField( // Changed TextField to TextFormField
+          controller: _textEditingController,
           keyboardType: widget.keyboardType,
           cursorColor: kPrimaryColor,
           style: TextStyle(color: kPrimaryColor),
@@ -67,6 +79,7 @@ class _CustomLoginTextFieldState extends State<CustomLoginTextField> {
             )
                 : null,
           ),
+          validator: widget.validator, // Set validator
         ),
       ],
     );

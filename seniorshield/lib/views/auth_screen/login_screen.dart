@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seniorshield/constants/colors.dart';
+import 'package:seniorshield/views/home_screen/homepage.dart';
 import 'package:seniorshield/views/splash_screen/splash3.dart';
 import 'package:seniorshield/widgets/responsive_text.dart';
 
 import '../../constants/util/util.dart';
 import '../../widgets/customLogin_textField.dart';
+import '../home_screen/home.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,27 +24,32 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SingleChildScrollView(
         physics: NeverScrollableScrollPhysics(),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             SizedBox(height: kVerticalMargin * 3),
-            GestureDetector(
-              onTap: () {
-                Get.to(Splash3());
-              },
-              behavior: HitTestBehavior.translucent,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin),
-                child: Icon(
-                  Icons.arrow_back_outlined,
-                  size: 32,
-                  color: kPrimaryColor,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Get.to(Splash3());
+                  },
+                  behavior: HitTestBehavior.translucent,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin),
+                    child: Icon(
+                      Icons.arrow_back_outlined,
+                      size: 32,
+                      color: kPrimaryColor,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             Container(
               padding: EdgeInsets.symmetric(
-                  horizontal: kHorizontalMargin * 2, vertical: kVerticalMargin),
+                   vertical: kVerticalMargin),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -50,7 +57,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     "Let's Sign you in.",
                     fontSize: 30,
                     fontWeight: FontWeight.w600,
-
                     textColor: kPrimaryColor,
                   ),
                   ResponsiveText(
@@ -62,7 +68,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ResponsiveText(
                     "You've been missed!",
                     fontSize: 25,
-
                     textColor: kPrimaryColor,
                   ),
                 ],
@@ -88,26 +93,44 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: true,
                     keyboardType: TextInputType.visiblePassword,
                   ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(kPrimaryColor), // Change color here
+                      ),
+                      child: ResponsiveText("Forget Password?",textColor: kPrimaryColor,),
+                    ),
+                  )
+
                 ],
               ),
             ),
-            SizedBox(height: kVerticalMargin),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin*2),
+              padding:  EdgeInsets.symmetric(horizontal: kHorizontalMargin*2),
               child: SizedBox(
-                width: double.infinity, // Ensures buttons take full width
-                child: Container(
-                  margin:  EdgeInsets.only(bottom:kVerticalMargin),
-                  padding:  EdgeInsets.symmetric(horizontal:kHorizontalMargin*2,vertical: kVerticalMargin),
-                  decoration: BoxDecoration(
-                    color: kPrimaryColor,
-                    borderRadius: BorderRadius.circular(32),
+                width: double.infinity, // Set width to take full width
+                child: ElevatedButton(
+                  onPressed: () {
+                    Get.to(Home());
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(kPrimaryColor),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32.0),
+                      ),
+                    ),
                   ),
-                  child: ResponsiveText(
-                    "Login",
-                    fontSize: 16,
-                    textColor: kDefaultIconLightColor,
-                    textAlign: TextAlign.center, // Aligns text in the center
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin * 2, vertical: kVerticalMargin),
+                    child: ResponsiveText(
+                      "Login",
+                      fontSize: 16,
+                      textColor: kDefaultIconLightColor,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
               ),
