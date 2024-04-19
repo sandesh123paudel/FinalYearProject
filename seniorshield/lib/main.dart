@@ -1,18 +1,32 @@
-import 'package:flutter/gestures.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:seniorshield/constants/colors.dart';
-import 'package:seniorshield/views/home_screen/home.dart';
 import 'package:seniorshield/views/splash_screen/splash1.dart';
+import 'package:seniorshield/views/home_screen/home.dart'; // Import the home screen
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences package
 
-void main() {
-  runApp(const MyApp());
+import 'firebase_options.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Check if the user is logged in based on SharedPreferences
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isLoggedIn = prefs.containsKey('userId') && prefs.containsKey('email');
+
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
 
-  // This widget is the root of your application.
+
+  const MyApp({required this.isLoggedIn, Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -20,8 +34,33 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: kDefaultIconLightColor,
         appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
+        timePickerTheme: TimePickerThemeData(
+          confirmButtonStyle: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(kDefaultIconLightColor),
+            backgroundColor: MaterialStateProperty.all(kPrimaryColor),
+            overlayColor: MaterialStateProperty.all(kPrimaryColor),
+          ),
+          cancelButtonStyle: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all(kDefaultIconLightColor),
+            backgroundColor: MaterialStateProperty.all(kPrimaryColor),
+            overlayColor: MaterialStateProperty.all(kPrimaryColor),
+          ),
+          backgroundColor:
+          kDefaultIconLightColor, // Change the background color of the time picker dialog
+          hourMinuteColor: kPrimaryColor, // Use your primary color for hour and minute numbers
+          dialHandColor: kPrimaryColor, // Use your primary color for the clock hands
+          dialBackgroundColor: Colors.white, // Change the color of the clock face background
+          entryModeIconColor: kPrimaryColor, // Use your primary color for the clock/keyboard toggle icon
+          hourMinuteTextColor: kDefaultIconLightColor, // Use your primary color for the hour and minute text
+          inputDecorationTheme: InputDecorationTheme(
+            // Customize input decoration theme
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: kPrimaryColor), // Use your primary color for input border
+            ),
+          ),
+        ),
       ),
-      home: Splash1(),
+      home: isLoggedIn ? Home() : Splash1(), // Show home screen if logged in, otherwise show splash screen
     );
   }
 }

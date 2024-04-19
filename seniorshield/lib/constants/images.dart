@@ -21,6 +21,7 @@ const chat="assets/images/Chat.png";
 const settings="assets/images/Settings.png";
 
 
+const human="assets/images/human.png";
 
 
 

@@ -6,5 +6,5 @@ const kBlack600 = Color(0xff5E656E);
 const kSearchBorderColor = Color(0xffEAEBF0);
 const kItemDescriptionColor=Color(0xff68727D);
 const kShadowColor=Color(0xFFD2CECE);
-const kGreenShadowColor=Color(0xFFE9F8F1);
+const kGreenShadowColor=Color(0xD860AF5B);
 const kGreenBorderColor=Color(0xFF27B973);

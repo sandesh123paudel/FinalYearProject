@@ -9,6 +9,10 @@ class CustomRegisterTextField extends StatefulWidget {
   final String? hintText;
   final bool obscureText;
   final TextInputType? keyboardType;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
+  final String? errorText; // New errorText parameter
+  final ValueChanged<String>? onChanged; // Added onChanged parameter
 
   const CustomRegisterTextField({
     Key? key,
@@ -16,6 +20,10 @@ class CustomRegisterTextField extends StatefulWidget {
     @required this.hintText,
     this.keyboardType,
     this.obscureText = false,
+    this.controller,
+    this.errorText, // Added errorText parameter
+    this.onChanged,
+    this.validator, // Added validator parameter
   }) : super(key: key);
 
   @override
@@ -23,7 +31,15 @@ class CustomRegisterTextField extends StatefulWidget {
 }
 
 class _CustomRegisterTextFieldState extends State<CustomRegisterTextField> {
+  late TextEditingController _textEditingController;
   bool _obscureText = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize TextEditingController if not provided
+    _textEditingController = widget.controller ?? TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +53,22 @@ class _CustomRegisterTextFieldState extends State<CustomRegisterTextField> {
           fontWeight: FontWeight.bold,
         ),
         SizedBox(height: kVerticalMargin / 2),
-        TextField(
+        TextFormField(
+          controller: _textEditingController,
           keyboardType: widget.keyboardType,
           cursorColor: kPrimaryColor,
           style: TextStyle(color: kPrimaryColor),
           obscureText: widget.obscureText ? _obscureText : false,
+          onSaved: (value){
+            _textEditingController.text=value!;
+          },
+          onChanged: (value) {
+            setState(() {
+              // Reset error message on change
+              widget.errorText;
+            });
+            widget.onChanged?.call(value); // Pass onChanged callback to TextField
+          },
           decoration: InputDecoration(
             hintText: widget.hintText,
             hintStyle: TextStyle(color: kPrimaryColor.withOpacity(0.5)),
@@ -68,6 +95,15 @@ class _CustomRegisterTextFieldState extends State<CustomRegisterTextField> {
                 : null,
           ),
         ),
+
+        if (widget.errorText != null) // Display error text if available
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              widget.errorText!,
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
       ],
     );
   }

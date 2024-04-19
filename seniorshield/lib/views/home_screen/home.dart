@@ -61,7 +61,7 @@ class Home extends StatelessWidget {
         children: [
           Obx(
                 () => Expanded(
-              child: navBody.elementAt(controller.currentNavIndex.value),
+              child: _buildAnimatedSwitcher(controller, navBody),
             ),
           ),
         ],
@@ -83,4 +83,22 @@ class Home extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildAnimatedSwitcher(HomeController controller, List<Widget> navBody) {
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 500), // Adjust duration as needed
+      child: navBody[controller.currentNavIndex.value],
+      transitionBuilder: (child, animation) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: Offset(1.0, 0.0), // Slide from right to left
+            end: Offset(0.0, 0.0),
+          ).animate(animation),
+          child: child,
+        );
+      },
+    );
+  }
+
+
 }

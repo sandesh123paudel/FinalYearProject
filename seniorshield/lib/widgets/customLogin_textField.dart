@@ -10,6 +10,8 @@ class CustomLoginTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextEditingController? controller;
   final String? Function(String?)? validator; // New validator parameter
+  final String? errorText; // New errorText parameter
+  final ValueChanged<String>? onChanged;
 
   const CustomLoginTextField({
     Key? key,
@@ -19,6 +21,8 @@ class CustomLoginTextField extends StatefulWidget {
     this.obscureText = false,
     this.controller,
     this.validator, // Added validator parameter
+    this.errorText,// Added errorText parameter
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -48,11 +52,15 @@ class _CustomLoginTextFieldState extends State<CustomLoginTextField> {
           fontWeight: FontWeight.w500,
         ),
         SizedBox(height: kVerticalMargin / 2),
-        TextFormField( // Changed TextField to TextFormField
+        TextFormField(
           controller: _textEditingController,
           keyboardType: widget.keyboardType,
           cursorColor: kPrimaryColor,
+          onChanged: widget.onChanged,
           style: TextStyle(color: kPrimaryColor),
+          onSaved: (value){
+            _textEditingController.text=value!;
+          },
           obscureText: widget.obscureText ? _obscureText : false,
           decoration: InputDecoration(
             hintText: widget.hintText,
@@ -81,6 +89,14 @@ class _CustomLoginTextFieldState extends State<CustomLoginTextField> {
           ),
           validator: widget.validator, // Set validator
         ),
+        if (widget.errorText != null) // Display error text if available
+          Padding(
+            padding: const EdgeInsets.only(top: 4.0),
+            child: Text(
+              widget.errorText!,
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
       ],
     );
   }

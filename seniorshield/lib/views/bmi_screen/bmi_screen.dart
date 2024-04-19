@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:seniorshield/constants/colors.dart';
 import 'package:seniorshield/constants/util/util.dart';
+import 'package:seniorshield/widgets/customBMI_textField.dart';
 import 'package:seniorshield/widgets/responsive_text.dart';
 import '../../constants/images.dart';
 import '../../widgets/customLogin_textField.dart';
@@ -114,12 +115,10 @@ class _BMIScreenState extends State<BMIScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    CustomLoginTextField(
+                    CustomBMITextField(
                       controller: weightController,
                       labelText: 'Weight',
                       hintText: '80 kg',
-                      obscureText: false,
-                      keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter weight';
@@ -131,12 +130,10 @@ class _BMIScreenState extends State<BMIScreen> {
                       },
                     ),
                     SizedBox(height: 20),
-                    CustomLoginTextField(
+                    CustomBMITextField(
                       controller: heightController,
                       labelText: 'Height',
                       hintText: '180 cm',
-                      obscureText: false,
-                      keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter height';
@@ -148,12 +145,10 @@ class _BMIScreenState extends State<BMIScreen> {
                       },
                     ),
                     SizedBox(height: 20),
-                    CustomLoginTextField(
+                    CustomBMITextField(
                       controller: ageController,
                       labelText: 'Age',
                       hintText: '50 yrs',
-                      obscureText: false,
-                      keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter age';
@@ -223,7 +218,7 @@ class _BMIScreenState extends State<BMIScreen> {
               SizedBox(height: 10),
               ResponsiveText('Result: $result', fontWeight: FontWeight.bold,),
               SizedBox(height: 10),
-              ResponsiveText('Report: $interpretation'),
+              ResponsiveText('Report: $interpretation',fontWeight: FontWeight.bold),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
@@ -259,6 +254,7 @@ class _BMIScreenState extends State<BMIScreen> {
         SnackBar(
           content: Text('Please fill all the fields'),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
         ),
       );
       return false;

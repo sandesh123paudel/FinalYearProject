@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "65215985571",
+    "project_id": "seniorshieldapp-a65aa",
+    "storage_bucket": "seniorshieldapp-a65aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65215985571:android:41c01de3d34bf5dc80cc16",
+        "android_client_info": {
+          "package_name": "com.example.seniorshield"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhU-h4l0ZrpXwVFkbNMIJcph4ZQ_k4HVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
