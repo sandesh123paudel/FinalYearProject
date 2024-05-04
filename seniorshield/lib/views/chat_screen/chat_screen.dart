@@ -1,12 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter/services.dart';
+import 'package:seniorshield/api/apis.dart';
 import 'package:seniorshield/constants/colors.dart';
-import 'package:seniorshield/constants/images.dart';
 import 'package:seniorshield/constants/util/util.dart';
-import 'package:seniorshield/services/database.dart';
-import 'package:seniorshield/views/chat_screen/individual_chat_screen.dart';
+import 'package:seniorshield/models/user_model.dart';
 import 'package:seniorshield/widgets/responsive_text.dart';
+import '../../widgets/chat_user_card.dart';
+import '../../widgets/dialogs.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -16,221 +17,248 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  bool isSearch = false;
+  List<UserModel> _list = [];
+  final List<UserModel> _searchList = [];
+  bool _isSearching = false;
 
-  var queryResultSet = [];
-  var tempSearchStore = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    APIs.getSelfInfo();
 
-  initiateSearch(value) async {
-    if (value.length == 0) {
-      setState(() {
-        queryResultSet = [];
-        tempSearchStore = [];
-      });
-    }
-    setState(() {
-      isSearch = true;
-    });
-    var capitalizedValue =
-        value.substring(0, 1).toUpperCase() + value.substring(1);
-    if (queryResultSet.isEmpty && value.length == 1) {
-      QuerySnapshot docs = await DatabaseMethods().Search(value);
-      for (int i = 0; i < docs.docs.length; i++) {
-        queryResultSet.add(docs.docs[i].data());
-      }
-    } else {
-      tempSearchStore = [];
-      queryResultSet.forEach((element) {
-        if (element['username'].startsWith(capitalizedValue)) {
-          setState(() {
-            tempSearchStore.add(element);
-          });
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      if (APIs.auth.currentUser != null) {
+        if (message!.contains('pause')) {
+          APIs.updateActiveStatus(false);
         }
-      });
-    }
+        if (message.contains('resume')) {
+          APIs.updateActiveStatus(true);
+        }
+      }
+      return Future.value(message);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kPrimaryColor,
-      body: SafeArea(
-        child: Container(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                    left: kHorizontalMargin * 2,
-                    top: kVerticalMargin,
-                    right: kHorizontalMargin * 2,
-                    bottom: kVerticalMargin),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    isSearch
-                        ? Expanded(
-                            child: TextField(
-                            onChanged: (value) {
-                              initiateSearch(value.toUpperCase());
-                            },
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Search People",
-                              hintStyle: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: kDefaultIconLightColor,
-                                  fontFamily: 'Roboto Mono'),
-                            ),
-                            style: TextStyle(color: Colors.white),
-                          ))
-                        : ResponsiveText(
-                            "Senior Shield Chat",
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            textColor: kDefaultIconLightColor,
-                          ),
-                    GestureDetector(
-                      behavior: HitTestBehavior.translucent,
-                      onTap: () {
-                        isSearch = true;
-                        setState(() {});
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: kGreenShadowColor,
-                            borderRadius: BorderRadius.circular(32)),
-                        child: Icon(
-                          Icons.search,
-                          size: 20,
-                          color: kDefaultIconLightColor,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: kVerticalMargin * 1.5,
-                        horizontal: kHorizontalMargin * 1.5),
-                    width: width,
-                    decoration: BoxDecoration(
-                        color: kDefaultIconLightColor,
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(32),
-                          topLeft: Radius.circular(32),
-                        )),
-                    child: Column(
-                      children: [
-                        isSearch
-                            ? ListView(
-                                padding: EdgeInsets.only(
-                                    left: kHorizontalMargin,
-                                    right: kHorizontalMargin),
-                                primary: false,
-                                shrinkWrap: true,
-                                children: tempSearchStore.map((element) {
-                                  return buildResultCard(element);
-                                }).toList())
-                            : Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  IndiChatScreen()));
-                                    },
-                                    child: Row(
-                                      children: [
-                                        ClipRRect(
-                                          child: Image.asset(
-                                            human,
-                                            height: 50,
-                                            width: 50,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(60),
-                                        ),
-                                        SizedBox(
-                                          width: kHorizontalMargin,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ResponsiveText(
-                                              "Sandesh Paudel",
-                                              textColor: Colors.black,
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 18,
-                                              fontFamily: '',
-                                            ),
-                                            ResponsiveText("Hello Dear!!",
-                                                textColor: Colors.grey),
-                                          ],
-                                        ),
-                                        Spacer(),
-                                        ResponsiveText(
-                                          "04:30 PM",
-                                          textColor: kBlack600,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: kVerticalMargin),
-                                ],
-                              ),
-                      ],
-                    )),
-              )
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: WillPopScope(
+        onWillPop: () {
+          if (_isSearching) {
+            setState(() {
+              _isSearching = !_isSearching;
+            });
+            return Future.value(false);
+          } else {
+            return Future.value(true);
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: _isSearching
+                ? TextField(
+                    decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: "Name,Email,....",
+                        hintStyle: TextStyle(
+                            color: kDefaultIconLightColor.withOpacity(0.7))),
+                    autofocus: true,
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: kDefaultIconLightColor.withOpacity(0.7),
+                        letterSpacing: 0.9),
+                    onChanged: (value) {
+                      //search logic
+                      _searchList.clear();
+                      for (var i in _list) {
+                        if (i.fullName!
+                                .toLowerCase()
+                                .contains(value.toLowerCase()) ||
+                            i.email!
+                                .toLowerCase()
+                                .contains(value.toLowerCase())) {
+                          _searchList.add(i);
+                        }
+                        setState(() {
+                          _searchList;
+                        });
+                      }
+                    },
+                  )
+                : ResponsiveText(
+                    "Senior Sheild Chat",
+                    textColor: kDefaultIconLightColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
+            backgroundColor: kPrimaryColor,
+            leading: Icon(
+              Icons.chat_bubble_outlined,
+              color: kDefaultIconLightColor,
+            ),
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = !_isSearching;
+                    });
+                  },
+                  icon: Icon(
+                    _isSearching
+                        ? CupertinoIcons.clear_circled_solid
+                        : Icons.search,
+                    color: kDefaultIconLightColor,
+                  ))
             ],
           ),
+          floatingActionButton: FloatingActionButton(
+              backgroundColor: kPrimaryColor,
+              foregroundColor: kDefaultIconLightColor,
+              onPressed: () {
+                _showMessageUpdateDialog();
+              },
+              child: const Icon(Icons.add_comment_rounded)),
+          body: StreamBuilder(
+              stream: APIs.getMyUsersId(),
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.none:
+                    return const Center(
+                      child: CircularProgressIndicator(color: kPrimaryColor,),
+                    );
+                  case ConnectionState.active:
+                  case ConnectionState.done:
+                    return StreamBuilder(
+                      builder: (context, snapshot) {
+                        switch (snapshot.connectionState) {
+                          case ConnectionState.waiting:
+                          case ConnectionState.none:
+                            return const Center(
+                              child: CircularProgressIndicator(color: kPrimaryColor,),
+                            );
+                          case ConnectionState.active:
+                          case ConnectionState.done:
+                            final data = snapshot.data?.docs;
+                            _list = data
+                                    ?.map((e) => UserModel.fromJson(e.data()))
+                                    .toList() ??
+                                [];
+                            if (_list.isNotEmpty) {
+                              return ListView.builder(
+
+                                  itemCount: _isSearching
+                                      ? _searchList.length
+                                      : _list.length,
+                                  padding:
+                                      EdgeInsets.only(top: kVerticalMargin / 2),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    return ChatUserCard(
+                                      user: _isSearching
+                                          ? _searchList[index]
+                                          : _list[index],
+                                    );
+                                    // return Text("Name: ${list[index]}");
+                                  });
+                            } else {
+                              return const Center(
+                                  child: ResponsiveText(
+                                "No Connections Found",
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ));
+                            }
+                        }
+                      },
+                      stream: APIs.getAllUsers(
+                          snapshot.data?.docs.map((e) => e.id).toList() ?? []),
+                    );
+                }
+              }),
         ),
       ),
     );
   }
 
-  Widget buildResultCard(data) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: kVerticalMargin),
-      child: Material(
-        elevation: 5.0,
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          padding: EdgeInsets.all(18),
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-          child: Row(
-            children: [
-              ClipRRect(
-                child: Image.asset(human,height: 50,),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              SizedBox(width: kHorizontalMargin),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+  void _showMessageUpdateDialog() {
+    String email = '';
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.only(
+                  left: 24, right: 24, top: 20, bottom: 10),
+
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+
+              //title
+              title: const Row(
                 children: [
-                  ResponsiveText(
-                    data["fullName"],
-                    textColor: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
+                  Icon(
+                    Icons.person,
+                    color: kPrimaryColor,
+                    size: 28,
                   ),
-                  SizedBox(height: kVerticalMargin/4),
-                  ResponsiveText(data["username"],
-                      textColor: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18.0)
+                  Text(' Add Email')
                 ],
-              )
-            ],
-          ),
-        ),
-      ),
-    );
+              ),
+
+              //content
+              content: TextFormField(
+                maxLines: null,
+                onChanged: (value) => email = value,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                    hintText: 'Add Email',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15))),
+              ),
+
+              //actions
+              actions: [
+                //cancel button
+                MaterialButton(
+                    onPressed: () {
+                      //hide alert dialog
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(color: kPrimaryColor, fontSize: 16),
+                    )),
+
+                //update button
+                MaterialButton(
+                    onPressed: () async {
+                      //hide alert dialog
+                      Navigator.pop(context);
+                      if (email.isNotEmpty) {
+                        await APIs.addChatUser(email).then((value) {
+                          if (!value) {
+                            Dialogs.showSnackbar(
+                                context, 'User Cannot Be Added');
+                          }
+                          else {
+                            setState(() {
+
+                            });
+                            Dialogs.showSnackbar(
+                                context, 'User Added Successfully');
+                          }
+                        });
+
+                      }
+
+                    },
+                    child: const Text(
+                      'Add User',
+                      style: TextStyle(color: kPrimaryColor, fontSize: 16),
+                    ))
+              ],
+            ));
   }
 }

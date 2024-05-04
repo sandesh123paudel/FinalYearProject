@@ -23,6 +23,11 @@ const settings="assets/images/Settings.png";
 
 const human="assets/images/human.png";
 
+const camera="assets/images/camera.png";
+const files="assets/images/files.png";
+
+
+
 
 
 

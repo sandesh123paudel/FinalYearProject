@@ -138,13 +138,13 @@ class _AddMedicineFormState extends State<AddMedicineForm> {
                 textColor: kDefaultIconLightColor,
               ),
               SizedBox(height: kVerticalMargin),
-              TextFieldWidget(hintText: "Sinex", labelText: "Medicine Name"),
+              const TextFieldWidget(hintText: "Sinex", labelText: "Medicine Name"),
               SizedBox(height: kVerticalMargin),
-              TextFieldWidget(hintText: "3 Capsules", labelText: "Dosages"),
+              const TextFieldWidget(hintText: "3 Capsules", labelText: "Dosages"),
               SizedBox(height: kVerticalMargin),
               ElevatedButton(
                 style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(kGreenShadowColor),
+                  backgroundColor: MaterialStateProperty.all(kGreenShadowColor),
 
                 ),
                 onPressed: () async {
@@ -172,13 +172,13 @@ class _AddMedicineFormState extends State<AddMedicineForm> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(kGreenBorderColor)
-                  ),
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(kGreenBorderColor)
+                    ),
                     onPressed: (){
-                    Navigator.pop(context);
+                      Navigator.pop(context);
 
-                }, child: ResponsiveText(
+                    }, child: ResponsiveText(
                   "Add Remainder",
                   textColor: kDefaultIconLightColor,
                   fontWeight: FontWeight.bold,
@@ -219,7 +219,7 @@ class TextFieldWidget extends StatelessWidget {
         labelStyle: TextStyle(color: kDefaultIconLightColor),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(
+          borderSide: const BorderSide(
             color: Colors.white,
             width: 2.0,
           ),

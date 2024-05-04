@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:seniorshield/constants/colors.dart';
 import 'package:seniorshield/views/splash_screen/splash3.dart';
 import 'package:seniorshield/widgets/responsive_text.dart';

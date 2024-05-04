@@ -59,8 +59,25 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() {
           _isLoading = true; // Set _isLoading to true when signing in
         });
-        await _auth.signInWithEmailAndPassword(email: email, password: password);
+        UserCredential userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+
         Fluttertoast.showToast(msg: "Login Successfull");
+
+        // Extract user information from Firestore
+        DocumentSnapshot<Map<String, dynamic>> userSnapshot = await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).get();
+        UserModel user = UserModel.fromJson(userSnapshot.data()!);
+
+        // Save user information in SharedPreferences
+        SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setBool('isLoggedIn', true);
+        await sharedPreferencesHelper.saveUserId(user.uid!);
+        await sharedPreferencesHelper.saveFullName(user.fullName!);
+        await sharedPreferencesHelper.saveEmail(user.email!);
+        await sharedPreferencesHelper.saveRole(user.role!);
+        await sharedPreferencesHelper.saveAddress(user.address!);
+
+
         setState(() {
           _isLoading = false; // Set _isLoading to true when signing in
         });
@@ -258,7 +275,7 @@ class _LoginScreenState extends State<LoginScreen> {
           _isLoading?Container(
             color: Colors.black.withOpacity(0.5), // Transparent black color as overlay
             child: Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(color: kPrimaryColor,),
             ),
           )
               : SizedBox.shrink(),

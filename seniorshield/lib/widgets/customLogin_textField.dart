@@ -94,7 +94,7 @@ class _CustomLoginTextFieldState extends State<CustomLoginTextField> {
             padding: const EdgeInsets.only(top: 4.0),
             child: Text(
               widget.errorText!,
-              style: TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.red),
             ),
           ),
       ],

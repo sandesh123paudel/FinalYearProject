@@ -57,7 +57,7 @@ class _CustomRegisterTextFieldState extends State<CustomRegisterTextField> {
           controller: _textEditingController,
           keyboardType: widget.keyboardType,
           cursorColor: kPrimaryColor,
-          style: TextStyle(color: kPrimaryColor),
+          style: const TextStyle(color: kPrimaryColor),
           obscureText: widget.obscureText ? _obscureText : false,
           onSaved: (value){
             _textEditingController.text=value!;
@@ -74,11 +74,11 @@ class _CustomRegisterTextFieldState extends State<CustomRegisterTextField> {
             hintStyle: TextStyle(color: kPrimaryColor.withOpacity(0.5)),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: kPrimaryColor),
+              borderSide: const BorderSide(color: kPrimaryColor),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: kPrimaryColor, width: 2),
+              borderSide: const BorderSide(color: kPrimaryColor, width: 2),
             ),
             suffixIcon: widget.obscureText
                 ? IconButton(
@@ -101,7 +101,7 @@ class _CustomRegisterTextFieldState extends State<CustomRegisterTextField> {
             padding: const EdgeInsets.only(top: 4.0),
             child: Text(
               widget.errorText!,
-              style: TextStyle(color: Colors.red),
+              style: const TextStyle(color: Colors.red),
             ),
           ),
       ],
