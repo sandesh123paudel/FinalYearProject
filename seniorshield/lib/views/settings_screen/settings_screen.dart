@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:seniorshield/constants/images.dart';
 import 'package:seniorshield/constants/util/util.dart';
@@ -256,38 +258,6 @@ class _SettingScreenState extends State<SettingScreen> {
                       textColor: kDefaultIconLightColor,
                     ),
                   ),
-                  // Container(
-                  //   width: width,
-                  //   padding: EdgeInsets.all(kHorizontalMargin),
-                  //   height: kVerticalMargin*3,
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: BorderRadius.circular(32),
-                  //     color: Colors.green.shade100
-                  //   ),
-                  //   child: ResponsiveText('Name: ${loggedInUser.fullName}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
-                  // ),
-                  // SizedBox(height: kVerticalMargin),
-                  // Container(
-                  //   width: width,
-                  //   padding: EdgeInsets.all(kHorizontalMargin),
-                  //   height: kVerticalMargin*3,
-                  //   decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(32),
-                  //       color: Colors.green.shade100
-                  //   ),
-                  //   child: ResponsiveText('Address: ${loggedInUser.address}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
-                  // ),
-                  // SizedBox(height: kVerticalMargin),
-                  // Container(
-                  //   width: width,
-                  //   padding: EdgeInsets.all(kHorizontalMargin),
-                  //   height: kVerticalMargin*3,
-                  //   decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(32),
-                  //       color: Colors.green.shade100
-                  //   ),
-                  //   child: ResponsiveText('Joined On: ${MyDateUtil.getFormattedDate(context: context, time: loggedInUser.createdAt.toString())}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
-                  // )
                 ],
               ),
             ),
@@ -296,58 +266,16 @@ class _SettingScreenState extends State<SettingScreen> {
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: FloatingActionButton.extended(
-            onPressed: () async {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: kPrimaryColor,),
-                  );
-                },
-              );
-
-              try {
-                await APIs.updateActiveStatus(false);
-                await APIs.auth.signOut();
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setBool('isLoggedIn', false);
-                Navigator.pop(context); // Dismiss the progress indicator dialog
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Sign Out'),
-                      content: const Text('You have been signed out successfully.'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context); // Dismiss the dialog
-                            Navigator.pop(context); // Dismiss the current screen
-                            APIs.auth = FirebaseAuth.instance;
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (_) => LoginScreen()),
-                            );
-                          },
-                          child: Text('OK'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              } catch (e) {
-                // Handle sign out error
-                // You can show an error dialog or perform any other action here
-                Navigator.pop(context); // Dismiss the progress indicator dialog
-              }
+            onPressed: () {
+             performLogout(context);
             },
-
             icon: Icon(Icons.add_comment_rounded, color: kDefaultIconLightColor),
             backgroundColor: kPrimaryColor,
             label: ResponsiveText("Logout", textColor: kDefaultIconLightColor),
           ),
-
         )
+
+
     );
   }
 
@@ -448,9 +376,101 @@ class _SettingScreenState extends State<SettingScreen> {
     );
 
     APIs.updateUserData(updatedUser);
+
+    Fluttertoast.showToast(
+      msg: "User updated successfully",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: kPrimaryColor,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
 
 
 
+}
+
+
+Future<void> performLogout(BuildContext context) async {
+  // Show confirmation dialog first
+  bool confirmLogout = await showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Confirm Logout'),
+        content: Text('Are you sure you want to log out?'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Cancel', style: TextStyle(color: Colors.red)),
+            onPressed: () => Navigator.of(context).pop(false), // Return false on cancel
+          ),
+          TextButton(
+            child: Text('Logout', style: TextStyle(color: kPrimaryColor)),
+            onPressed: () => Navigator.of(context).pop(true), // Return true on logout
+          ),
+        ],
+      );
+    },
+  );
+
+  // Proceed with logout if confirmed
+  if (confirmLogout) {
+    try {
+      // Showing a loading dialog with primary color
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: kPrimaryColor, // Set background color to primary color
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(backgroundColor: Colors.white),
+                SizedBox(width: 20), // Spacing between spinner and text
+                Text("Logging out...", style: TextStyle(color: Colors.white)),
+              ],
+            ),
+          );
+        },
+      );
+
+      // Update active status and sign out
+      // await APIs.updateActiveStatus(false);
+      await FirebaseAuth.instance.signOut();
+
+      // Clear shared preferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', false);
+
+      // Dismiss all dialogs and push the user to the login screen
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+
+      Fluttertoast.showToast(
+        msg: "Logout successful",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: kPrimaryColor,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } catch (e) {
+      Navigator.of(context).pop(); // Close the loading dialog
+      Fluttertoast.showToast(
+        msg: "Logout failed: $e",
+        toastLength: Toast.LENGTH_LONG,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
 }

@@ -168,10 +168,18 @@ class APIs {
   }
 
   static Future<void> updateActiveStatus(bool isOnline) async {
+    if (me == null) {
+      await getSelfInfo(); // Initialize 'me' if it's null
+      if (me == null) { // Check again if 'me' is still null after initialization attempt
+        print('Failed to initialize user information.');
+        return;
+      }
+    }
+
     firestore.collection('users').doc(user.uid).update({
       'is_online': isOnline,
       'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
-      'push_token': me.pushToken
+      'push_token': me!.pushToken // Use '!' since we've checked for nullity
     });
   }
 
