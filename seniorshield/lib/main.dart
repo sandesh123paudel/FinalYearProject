@@ -1,27 +1,33 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
+
 import 'package:seniorshield/constants/colors.dart';
-import 'package:seniorshield/views/splash_screen/splash1.dart';
+import 'package:seniorshield/services/local_notifications.dart';
+
+import 'package:seniorshield/views/auth_screen/login_screen.dart';
+
 import 'package:seniorshield/views/home_screen/home.dart';
+import 'package:seniorshield/views/splash_screen/splash1.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  NotificationHeleper.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  // Retrieve login state from shared preferences
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-
-  await FirebaseMessaging.instance.getInitialMessage();
+  // Setup local and Firebase messaging notifications
   runApp(MyApp(isLoggedIn: isLoggedIn));
 }
+
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;

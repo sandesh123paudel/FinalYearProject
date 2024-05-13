@@ -191,4 +191,16 @@ class APIs {
       return false;
     }
   }
+
+
+  static Future<void> updateUserData(UserModel updatedUser) async {
+    try {
+      await firestore.collection('users').doc(user.uid).update(updatedUser.toJson());
+      print('User data updated successfully');
+    } catch (e) {
+      print('Error updating user data: $e');
+    }
+  }
+
+
 }

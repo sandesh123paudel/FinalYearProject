@@ -28,6 +28,14 @@ class _SettingScreenState extends State<SettingScreen> {
 
   UserModel loggedInUser = UserModel();
   String?  _image;
+  final _formKey = GlobalKey<FormState>();
+
+
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _aboutController = TextEditingController();
+
 
   String defaultImageUrl =
       'https://static.vecteezy.com/system/resources/thumbnails/002/002/427/small/man-avatar-character-isolated-icon-free-vector.jpg';
@@ -46,8 +54,21 @@ class _SettingScreenState extends State<SettingScreen> {
           .get();
       setState(() {
         loggedInUser = UserModel.fromJson(userData.data()!);
+        _nameController.text = loggedInUser.fullName ?? '';
+        _emailController.text = loggedInUser.email ?? '';
+        _addressController.text = loggedInUser.address ?? '';
+        _aboutController.text = loggedInUser.about ?? '';
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _addressController.dispose();
+    _aboutController.dispose();
+    super.dispose();
   }
 
 
@@ -71,88 +92,204 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: kHorizontalMargin * 2),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: kVerticalMargin),
-                Stack(
-                  children: [
-                    _image!=null?ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child:  ClipRRect(
-                          borderRadius:
-                          BorderRadius.circular(100),
-                          child: Image.file(File(_image!),
-                              width: width*0.45,
-                              height:height*0.2,
-                              fit: BoxFit.cover))):
-                    ClipRRect(
-                      borderRadius:BorderRadius.circular(100),
-                      child: CachedNetworkImage(
-                        width: width*0.45,
-                        height:height*0.2,
-                        fit: BoxFit.fill,
-                        imageUrl: loggedInUser.image.toString(),
-                        errorWidget: (context, url, error) =>
-                        const CircleAvatar(
-                            child: Icon(CupertinoIcons.person)),
+          child: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(height: kVerticalMargin),
+                  Stack(
+                    children: [
+                      _image!=null?ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child:  ClipRRect(
+                            borderRadius:
+                            BorderRadius.circular(100),
+                            child: Image.file(File(_image!),
+                                width: width*0.45,
+                                height:height*0.2,
+                                fit: BoxFit.cover))):
+                      ClipRRect(
+                        borderRadius:BorderRadius.circular(100),
+                        child: CachedNetworkImage(
+                          width: width*0.45,
+                          height:height*0.2,
+                          fit: BoxFit.fill,
+                          imageUrl: loggedInUser.image.toString(),
+                          errorWidget: (context, url, error) =>
+                          const CircleAvatar(
+                              child: Icon(CupertinoIcons.person)),
+                        ),
                       ),
+                      Positioned(
+                        bottom:0,
+                        right: 0,
+                        child: MaterialButton(onPressed: (){
+                          _showBottomSheet();
+                        },
+                          elevation: 1,
+                          color: kDefaultIconLightColor,
+                          shape: const CircleBorder(),
+                        child:const Icon(Icons.edit,color: kPrimaryColor,) ,
+                        ),
+                      )
+                    ],
+                  ),
+                  ResponsiveText(
+                    loggedInUser.role.toString().toUpperCase(),
+                    fontSize: 20,
+                    textAlign: TextAlign.center,
+                    textColor: kPrimaryColor,
+                  ),
+                  SizedBox(height: kVerticalMargin),
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Name',
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: kPrimaryColor.withOpacity(0.5)),
+                      ),
+                      filled: true,
+                      fillColor: kPrimaryColor.withOpacity(0.1),
                     ),
-                    Positioned(
-                      bottom:0,
-                      right: 0,
-                      child: MaterialButton(onPressed: (){
-                        _showBottomSheet();
-                      },
-                        elevation: 1,
-                        color: kDefaultIconLightColor,
-                        shape: const CircleBorder(),
-                      child:const Icon(Icons.edit,color: kPrimaryColor,) ,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your name';
+                      }
+                      return null;
+                    },
+
+                  ),
+                  SizedBox(height: kVerticalMargin),
+                  TextFormField(
+                    controller: _emailController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
                       ),
-                    )
-                  ],
-                ),
-                ResponsiveText(
-                  loggedInUser.email.toString(),
-                  fontSize: 20,
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: kVerticalMargin),
-                Container(
-                  width: width,
-                  padding: EdgeInsets.all(kHorizontalMargin),
-                  height: kVerticalMargin*3,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(32),
-                    color: Colors.green.shade100
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: kPrimaryColor.withOpacity(0.5)),
+                      ),
+                      filled: true,
+                      fillColor: kPrimaryColor.withOpacity(0.1),
+                    ),
                   ),
-                  child: ResponsiveText('Name: ${loggedInUser.fullName}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
-                ),
-                SizedBox(height: kVerticalMargin),
-                Container(
-                  width: width,
-                  padding: EdgeInsets.all(kHorizontalMargin),
-                  height: kVerticalMargin*3,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      color: Colors.green.shade100
+                  SizedBox(height: kVerticalMargin),
+                  TextFormField(
+                    controller: _aboutController,
+                    decoration: InputDecoration(
+                      labelText: 'About',
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: kPrimaryColor.withOpacity(0.5)),
+                      ),
+                      filled: true,
+                      fillColor: kPrimaryColor.withOpacity(0.1),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter something about yourself';
+                      }
+                      return null;
+                    },
                   ),
-                  child: ResponsiveText('Address: ${loggedInUser.address}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
-                ),
-                SizedBox(height: kVerticalMargin),
-                Container(
-                  width: width,
-                  padding: EdgeInsets.all(kHorizontalMargin),
-                  height: kVerticalMargin*3,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(32),
-                      color: Colors.green.shade100
+                  SizedBox(height: kVerticalMargin),
+                  TextFormField(
+                    controller: _addressController,
+                    decoration: InputDecoration(
+                      labelText: 'Address',
+                      labelStyle: TextStyle(color: kPrimaryColor),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: kPrimaryColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: kPrimaryColor.withOpacity(0.5)),
+                      ),
+                      filled: true,
+                      fillColor: kPrimaryColor.withOpacity(0.1),
+
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your address';
+                      }
+                      return null;
+                    },
                   ),
-                  child: ResponsiveText('Joined On: ${MyDateUtil.getFormattedDate(context: context, time: loggedInUser.createdAt.toString())}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
-                )
-              ],
+
+
+                  SizedBox(height: kVerticalMargin),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateColor.resolveWith((states) => kPrimaryColor)
+                    ),
+                    onPressed: () {
+
+                      if (_formKey.currentState!.validate()) {
+                        updateUserData();
+                      }
+
+                    },
+                    child: ResponsiveText(
+                      'Update Profile',
+                      textColor: kDefaultIconLightColor,
+                    ),
+                  ),
+                  // Container(
+                  //   width: width,
+                  //   padding: EdgeInsets.all(kHorizontalMargin),
+                  //   height: kVerticalMargin*3,
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: BorderRadius.circular(32),
+                  //     color: Colors.green.shade100
+                  //   ),
+                  //   child: ResponsiveText('Name: ${loggedInUser.fullName}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
+                  // ),
+                  // SizedBox(height: kVerticalMargin),
+                  // Container(
+                  //   width: width,
+                  //   padding: EdgeInsets.all(kHorizontalMargin),
+                  //   height: kVerticalMargin*3,
+                  //   decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(32),
+                  //       color: Colors.green.shade100
+                  //   ),
+                  //   child: ResponsiveText('Address: ${loggedInUser.address}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
+                  // ),
+                  // SizedBox(height: kVerticalMargin),
+                  // Container(
+                  //   width: width,
+                  //   padding: EdgeInsets.all(kHorizontalMargin),
+                  //   height: kVerticalMargin*3,
+                  //   decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(32),
+                  //       color: Colors.green.shade100
+                  //   ),
+                  //   child: ResponsiveText('Joined On: ${MyDateUtil.getFormattedDate(context: context, time: loggedInUser.createdAt.toString())}',fontSize: 18,fontWeight:FontWeight.bold,textAlign: TextAlign.center),
+                  // )
+                ],
+              ),
             ),
           ),
         ),
@@ -285,6 +422,34 @@ class _SettingScreenState extends State<SettingScreen> {
       },
     );
   }
+
+
+  void updateUserData() {
+    UserModel updatedUser = UserModel(
+      uid: loggedInUser.uid,
+      fullName: _nameController.text.trim() != loggedInUser.fullName
+          ? _nameController.text.trim()
+          : loggedInUser.fullName,
+      email: _emailController.text.trim() != loggedInUser.email
+          ? _emailController.text.trim()
+          : loggedInUser.email,
+      address: _addressController.text.trim() != loggedInUser.address
+          ? _addressController.text.trim()
+          : loggedInUser.address,
+      about: _aboutController.text.trim() != loggedInUser.about
+          ? _aboutController.text.trim()
+          : loggedInUser.about, // Update about field
+      role: loggedInUser.role,
+      image: loggedInUser.image,
+      createdAt: loggedInUser.createdAt,
+      isOnline: loggedInUser.isOnline,
+      lastActive: loggedInUser.lastActive,
+      pushToken: loggedInUser.pushToken,
+    );
+
+    APIs.updateUserData(updatedUser);
+  }
+
 
 
 

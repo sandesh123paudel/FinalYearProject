@@ -58,14 +58,15 @@ class _Splash3State extends State<Splash3> {
                 ),
                 Padding(
                   padding:  EdgeInsets.symmetric(horizontal: kHorizontalMargin*2),
-                  child: ResponsiveText(
-                    "Fusce a consectetur velit. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Proin vitae ex neque.",
+                  child: const ResponsiveText(
+                    "'Parents are the architects of a child's future, the silent heroes who sculpt dreams into reality and sow seeds of love that blossom into eternity.'",
                     textColor: kPrimaryColor,
                     fontFamily: 'RobotoMono',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     textAlign: TextAlign.center,
                   ),
+
                 ),
                 SizedBox(height: kVerticalMargin*4),
                 styledButton("Login", () {
